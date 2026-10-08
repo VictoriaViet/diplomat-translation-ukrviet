@@ -64,7 +64,8 @@ with tab2:
             st.error("Помилка: API ключ не знайдено в налаштуваннях Secrets Streamlit.")
         else:
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            # Вказано актуальну назву моделі Gemini
+            model = genai.GenerativeModel('gemini-2.5-flash')
             
             terms_vi = ", ".join(sample_terms['vi'].tolist())
             terms_uk = ", ".join(sample_terms['uk'].tolist())
@@ -93,5 +94,8 @@ with tab2:
                 """
             
             with st.spinner("Генеруємо дипломатичний контекст..."):
-                response = model.generate_content(prompt)
-                st.markdown(response.text)
+                try:
+                    response = model.generate_content(prompt)
+                    st.markdown(response.text)
+                except Exception as e:
+                    st.error(f"Помилка при зверненні до API: {e}")
