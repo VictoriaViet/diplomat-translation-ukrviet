@@ -46,6 +46,29 @@ with tab1:
             if st.checkbox("Показати переклад"):
                 st.success(f"**Переклад (в'єтнамська):** {row['vi']}")
 
+# Функція безпечної генерації з автопідбором моделі
+def generate_diplomatic_text(prompt, api_key):
+    genai.configure(api_key=api_key)
+    candidate_models = [
+        'gemini-1.5-flash',
+        'gemini-2.0-flash',
+        'gemini-1.5-pro',
+        'gemini-1.0-pro'
+    ]
+    
+    last_error = None
+    for model_name in candidate_models:
+        try:
+            m = genai.GenerativeModel(model_name)
+            res = m.generate_content(prompt)
+            if res and res.text:
+                return res.text, None
+        except Exception as e:
+            last_error = str(e)
+            continue
+            
+    return None, last_error
+    
 # Таб 2: Генерація зв'язного тексту для перекладу
 with tab2:
     st.subheader("Практика перекладу зв'язного повідомлення")
