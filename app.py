@@ -74,11 +74,11 @@ def generate_with_dynamic_model(prompt_text, user_api_key):
             except Exception as e:
                 last_error = str(e)
                 continue
+                
         return None, last_error
 
     except Exception as e:
         return None, f"Помилка авторизації або отримання списку моделей: {e}"
-
 # Таб 2: Генерація зв'язного тексту для перекладу
 with tab2:
     st.subheader("Практика перекладу зв'язного повідомлення")
