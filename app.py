@@ -47,27 +47,28 @@ with tab1:
                 st.success(f"**Переклад (в'єтнамська):** {row['vi']}")
 
 # Функція безпечної генерації
-def generate_diplomatic_text(prompt_text, user_api_key):
-    genai.configure(api_key=user_api_key)
-    candidate_models = [
+def run_generation(prompt_text, api_key_value):
+    genai.configure(api_key=api_key_value)
+    
+    # Список моделей у порядку пріоритету
+    available_models = [
         'gemini-1.5-flash',
         'gemini-2.0-flash',
-        'gemini-1.5-pro',
-        'gemini-1.0-pro'
+        'gemini-1.5-pro'
     ]
     
-    last_err = None
-    for target_model_name in candidate_models:
+    last_error_message = None
+    for current_model_name in available_models:
         try:
-            curr_model = genai.GenerativeModel(target_model_name)
-            res = curr_model.generate_content(prompt_text)
-            if res and res.text:
-                return res.text, None
+            gen_model = genai.GenerativeModel(current_model_name)
+            response_obj = gen_model.generate_content(prompt_text)
+            if response_obj and response_obj.text:
+                return response_obj.text, None
         except Exception as e:
-            last_err = str(e)
+            last_error_message = str(e)
             continue
             
-    return None, last_err
+    return None, last_error_message
     
 # Таб 2: Генерація зв'язного тексту для перекладу
 with tab2:
