@@ -63,7 +63,7 @@ with tab2:
         if not api_key:
             st.error("Помилка: API ключ не знайдено в налаштуваннях Secrets Streamlit.")
         else:
-            client = genai.Client(api_key=api_key)
+            genai.configure(api_key=api_key)
             
             terms_vi = ", ".join(sample_terms['vi'].tolist())
             terms_uk = ", ".join(sample_terms['uk'].tolist())
