@@ -112,15 +112,9 @@ with tab2:
                 2. ✅ **Еталонний переклад (в'єтнамською):** [Переклад]
                 3. 💡 **Лексико-граматичний коментар:** [Коротке пояснення]
                 """
-            # Потокове відображення тексту для миттєвого відгуку
-            response_placeholder = st.empty()
-            full_response = ""
-            
-            try:
-                response = model.generate_content(prompt, stream=True)
-                for chunk in response:
-                    full_response += chunk.text
-                    response_placeholder.markdown(full_response + "▌")
-                response_placeholder.markdown(full_response)
-            except Exception as e:
-                st.error(f"Помилка при генерації: {e}")
+            with st.spinner("Генеруємо завдання..."):
+                output_text, error_info = run_generation(prompt, api_key)
+                if output_text:
+                    st.markdown(output_text)
+                else:
+                    st.error(f"Помилка при генерації: {error_info}")
