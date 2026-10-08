@@ -122,7 +122,7 @@ with tab2:
                 2. ✅ **Еталонний переклад (в'єтнамською):** [Переклад]
                 3. 💡 **Лексико-граматичний коментар:** [Коротке пояснення]
                 """
-           with st.spinner("Генеруємо завдання..."):
+            with st.spinner("Генеруємо завдання..."):
                 output_text, error_info = generate_with_dynamic_model(prompt, api_key)
                 if output_text:
                     st.markdown(output_text)
