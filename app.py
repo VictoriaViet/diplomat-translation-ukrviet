@@ -65,7 +65,7 @@ with tab2:
         else:
             genai.configure(api_key=api_key)
             # Вказано актуальну назву моделі Gemini
-            model = genai.GenerativeModel('gemini-2.5-flash')
+            model = genai.GenerativeModel('gemini-3.8-flash')
             
             terms_vi = ", ".join(sample_terms['vi'].tolist())
             terms_uk = ", ".join(sample_terms['uk'].tolist())
