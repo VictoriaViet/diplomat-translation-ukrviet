@@ -4,7 +4,7 @@ import random
 import google.generativeai as genai
 
 st.set_page_config(page_title="Дипломатичний переклад: В'єтнамсько-український", layout="wide")
-
+st.cache_data.clear()
 # 1. Завантаження лексики з CSV
 @st.cache_data
 def load_data():
