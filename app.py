@@ -46,30 +46,39 @@ with tab1:
             if st.checkbox("Показати переклад"):
                 st.success(f"**Переклад (в'єтнамська):** {row['vi']}")
 
-# Функція безпечної генерації
-def run_generation(prompt_text, api_key_value):
-    genai.configure(api_key=api_key_value)
+# Динамічний підбір актуальної моделі з акаунту
+def generate_with_dynamic_model(prompt_text, user_api_key):
+    genai.configure(api_key=user_api_key)
     
-    # Список моделей у порядку пріоритету
-    available_models = [
-        'gemini-1.5-flash',
-        'gemini-2.0-flash',
-        'gemini-1.5-pro'
-    ]
-    
-    last_error_message = None
-    for current_model_name in available_models:
-        try:
-            gen_model = genai.GenerativeModel(current_model_name)
-            response_obj = gen_model.generate_content(prompt_text)
-            if response_obj and response_obj.text:
-                return response_obj.text, None
-        except Exception as e:
-            last_error_message = str(e)
-            continue
-            
-    return None, last_error_message
-    
+    try:
+        # Отримуємо перелік усіх доступних моделей з Google API
+        available_models = [
+            m.name for m in genai.list_models() 
+            if 'generateContent' in m.supported_generation_methods
+        ]
+        
+        if not available_models:
+            return None, "Не знайдено жодної доступної моделі для текстової генерації."
+
+        # Пріоритет віддаємо моделям Flash
+        flash_models = [m for m in available_models if 'flash' in m.lower()]
+        target_models = flash_models if flash_models else available_models
+
+        last_error = None
+        for model_name in target_models:
+            try:
+                gen_model = genai.GenerativeModel(model_name)
+                response_obj = gen_model.generate_content(prompt_text)
+                if response_obj and response_obj.text:
+                    return response_obj.text, None
+            except Exception as e:
+                last_error = str(e)
+                continue
+        return None, last_error
+
+    except Exception as e:
+        return None, f"Помилка авторизації або отримання списку моделей: {e}"
+
 # Таб 2: Генерація зв'язного тексту для перекладу
 with tab2:
     st.subheader("Практика перекладу зв'язного повідомлення")
@@ -113,9 +122,9 @@ with tab2:
                 2. ✅ **Еталонний переклад (в'єтнамською):** [Переклад]
                 3. 💡 **Лексико-граматичний коментар:** [Коротке пояснення]
                 """
-            with st.spinner("Генеруємо завдання..."):
-                output_text, error_info = run_generation(prompt, api_key)
+           with st.spinner("Генеруємо завдання..."):
+                output_text, error_info = generate_with_dynamic_model(prompt, api_key)
                 if output_text:
                     st.markdown(output_text)
                 else:
-                    st.error(f"Помилка при генерації: {error_info}")
+                    st.error(f"Помилка генерації: {error_info}")
